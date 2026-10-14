@@ -1,0 +1,35 @@
+/* Enter your custom styles here */
+.customRedBar {
+    background-color: #f53232 !important;
+    color: white !important;
+    height: 40px !important;
+    /* Set your desired height */
+    min-height: 40px !important;
+    line-height: 40px !important;
+    /* Vertically center text/icons if needed */
+}
+
+/* Optional: Center child controls vertically */
+.customRedBar .sapMBarContainer {
+    align-items: center;
+    height: 100%;
+}
+
+/* Ensure button icon is white */
+.customRedBar .sapMBtnIcon {
+    color: white !important;
+    fill: white !important;
+}
+
+/* Optional: remove blue hover background on button */
+.customRedBar .sapMBtnTransparent>.sapMBtnInner:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.mainpage.sapMPage{
+    height:95% !important;
+}
+
+.rowSelected {
+    background-color: #90d8f4 !important; /* light blue */
+}

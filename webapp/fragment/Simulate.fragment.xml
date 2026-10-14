@@ -1,0 +1,276 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    id="idSimulateFragment"
+    xmlns:g="sap.f"
+>
+    <Dialog
+        id="Simulate_id_Dialog"
+        busyIndicatorDelay="0"
+        title="Final SES &amp; SC Items"
+        contentWidth="90%"
+        contentHeight="auto"
+        draggable="true"
+        resizable="true"
+    >
+        <VBox
+            alignContent="SpaceAround"
+            layoutData="{@ui5:layoutData: {rowSpan: 1, columnSpan: 1}}"
+        >
+            <g:Card
+                class="sapUiSmallMargin"
+                width="auto"
+            >
+                <g:content>
+                    <Table
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        items="{SESItemsModel>/results}"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>sesitems}"
+                                    level="H2"
+                                />
+                                <ToolbarSpacer />
+                                <HBox
+                                    visible="{= !${viewModel>/SESMode} }"
+                                    columnGap="8px"
+                                >
+                                    <Button
+                                        text="{i18n>edit}"
+                                        type="Emphasized"
+                                        press="onToggleSESEditMode"
+                                        visible="{= !${viewModel>/sesEditMode}}"
+                                    />
+                                    <Button
+                                        text="{i18n>Save}"
+                                        type="Accept"
+                                        press="onToggleSESEditMode"
+                                        visible="{viewModel>/sesEditMode}"
+                                    />
+                                    <Button
+                                        text="{i18n>SESProcess}"
+                                        type="Accept"
+                                        press="SESProcess"
+                                        visible="{= !${viewModel>/sesEditMode}}"
+                                    />
+                                </HBox>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <!-- <Column visible="{viewModel>/sesEditMode}">
+                                <Text text="{i18n>itemid}" />
+                            </Column> -->
+                            <Column >
+                                <Text text="{i18n>Product}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="{i18n>Product_Description}" />
+                            </Column>
+                            <Column visible="{viewModel>/sesEditMode}">
+                                <Text text="{i18n>Material}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !${viewModel>/sesEditMode}}">
+                                <Text text="{i18n>Material}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="{i18n>Material_Description}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="{i18n>starttime}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="{i18n>endtime}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{viewModel>/sesEditMode}">
+                                <Text text="{i18n>Quantity}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !${viewModel>/sesEditMode}}">
+                                <Text text="{i18n>Quantity}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="{i18n>Unit}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !!${SESItemsModel>/colVis} &amp;&amp; !!${viewModel>/sesEditMode}}" width="120px">
+                                <Text text="" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !!${SESItemsModel>/colVis} &amp;&amp; !${viewModel>/sesEditMode}}" width="80px">
+                                <Text text="" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <!-- <Input type="Number" value="{SESItemsModel>ItemID}" showValueHelp="true" valueHelpRequest=".onProductSelectionRequest"/> -->
+                                    <Text text="{SESItemsModel>ItemID}" />
+                                    <Text text="{SESItemsModel>Description}" />
+                                    <Input type="Number" value="{SESItemsModel>Material}" showValueHelp="true" valueHelpRequest=".onProductSelectionRequest"/>
+                                    <Text text="{SESItemsModel>Material}" />
+                                    <Text text="{SESItemsModel>MaterialDescription}"/>
+                                    <Text text="{path:'SESItemsModel>StartDateTime', formatter: '.Formatter.formatDate'}" />
+                                    <Text text="{path:'SESItemsModel>EndDateTime', formatter: '.Formatter.formatDate'}"/>
+                                    <Input value="{SESItemsModel>Quantity}" type="Number" liveChange="onItemNoLiveChange"/>
+                                    <Text text="{SESItemsModel>Quantity}" />
+                                    <Text text="{SESItemsModel>QtyUnit}" />
+                                    <Select selectedKey="{SESItemsModel>CBVal}" change="SESEstChange" visible="{= !!${SESItemsModel>RegionalID} }">
+                                        <core:Item key="Metro" text="Metro"/>
+                                        <core:Item key="Regional" text="Regional"/>
+                                    </Select>
+                                    <Text visible="{= !!${SESItemsModel>RegionalID} }" text="{SESItemsModel>CBVal}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </g:content>
+            </g:Card>
+
+            <g:Card
+                class="sapUiSmallMargin sapUiTinyNegativeMarginTop"
+                width="auto"
+            >
+                <g:content>
+                    <Table
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        items="{SCItemsModel>/results}"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>scitems}"
+                                    level="H2"
+                                />
+                                <ToolbarSpacer />
+                                <HBox
+                                    visible="{= !${viewModel>/SCFMode} }"
+                                    columnGap="8px"
+                                >
+                                    <Button
+                                        text="{i18n>edit}"
+                                        type="Emphasized"
+                                        press="onToggleSCEditMode"
+                                        visible="{= !${viewModel>/scEditMode}}"
+                                    />
+                                    <Button
+                                        text="{i18n>Save}"
+                                        type="Accept"
+                                        press="onToggleSCEditMode"
+                                        visible="{viewModel>/scEditMode}"
+                                    />
+                                    <Button
+                                        text="{i18n>SCFProcess}"
+                                        type="Accept"
+                                        press="SCFProcess"
+                                        visible="{= !${viewModel>/scEditMode}}"
+                                    />
+                                </HBox>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column>
+                                <Text text="{i18n>Product}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>starttime}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>endtime}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="{i18n>Product_Description}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                                visible="{viewModel>/scEditMode}"
+                            >
+                                <Text text="{i18n>Quantity}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                                visible="{= !${viewModel>/scEditMode}}"
+                            >
+                                <Text text="{i18n>Quantity}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>Unit}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                                visible="{= !!${SCItemsModel>/colVis} &amp;&amp; !!${viewModel>/scEditMode}}"
+                                width="120px"
+                            >
+                                <Text text="" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                                visible="{= !!${SCItemsModel>/colVis} &amp;&amp; !${viewModel>/scEditMode}}"
+                                width="80px"
+                            >
+                                <Text text="" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{SCItemsModel>ItemID}" />
+                                    <Text
+                                        text="{path:'SCItemsModel>StartDateTime', formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <Text
+                                        text="{path:'SCItemsModel>EndDateTime', formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <Text text="{SCItemsModel>Description}" />
+                                    <Input
+                                        value="{SCItemsModel>Quantity}"
+                                        type="Number"
+                                        liveChange="onItemNoLiveChange"
+                                    />
+                                    <Text text="{SCItemsModel>Quantity}" />
+                                    <Text text="{SCItemsModel>QtyUnit}" />
+                                    <Select
+                                        selectedKey="{SCItemsModel>CBVal}"
+                                        change="SCEstChange"
+                                        visible="{= !!${SCItemsModel>RegionalID} }"
+                                    >
+                                        <core:Item
+                                            key="Metro"
+                                            text="Metro"
+                                        />
+                                        <core:Item
+                                            key="Regional"
+                                            text="Regional"
+                                        />
+                                    </Select>
+                                    <Text
+                                        visible="{= !!${SCItemsModel>RegionalID} }"
+                                        text="{SCItemsModel>CBVal}"
+                                    />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </g:content>
+            </g:Card>
+        </VBox>
+        <endButton>
+            <Button
+                text="Close"
+                press="S_onCloseDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
+<!-- ${SCItemsModel>/colVis} &amp;&amp;  -->

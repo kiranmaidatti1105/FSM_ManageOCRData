@@ -1,0 +1,707 @@
+<mvc:View
+    controllerName="sap.winslow.ocr.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:layout="sap.f"
+    xmlns:m="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:core="sap.ui.core"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+>
+    <Bar
+        design="Header"
+        class="customRedBar"
+    >
+        <!-- Left side: Logo image -->
+        <contentLeft>
+            <Image src="images/Trafman_logo.png" alt="TRAFMAN SOLUTIONS" height="25px"/>
+        </contentLeft>
+
+        <!-- Right side: Logout button with icon -->
+        <contentRight>
+            <Button
+                icon="sap-icon://log"
+                press="onLogoutPress"
+                class="customLogoutButton"
+                type="Negative"
+            />
+        </contentRight>
+    </Bar>
+    <Page
+        showHeader="false"
+        class="mainpage"
+    >
+        <layout:FlexibleColumnLayout
+            id="fcl"
+            layout="TwoColumnsMidExpanded"
+            visible="false"
+        >
+            <layout:beginColumnPages>
+                <Page title="Docket OCR Verification">
+                    <headerContent>
+                        <Button
+                            icon="sap-icon://refresh"
+                            press=".onRefreshPress"
+                        />
+                        <Button
+                            id="StartExpandBtn"
+                            icon="sap-icon://full-screen"
+                            press=".onExpandLeftFullScreen"
+                        />
+                    </headerContent>
+
+                    <smartFilterBar:SmartFilterBar
+                        id="id_Docket_SmartFilterBar"
+                        entitySet="DocketsOCR"
+                        useToolbar="false"
+                        search="IA_onSearch"
+                        showClearOnFB="true"
+                        clear="IA_onPressClear"
+                        enableBasicSearch="false"
+                        filterBarExpanded="true"
+                        showFilterConfiguration="false"
+                        persistencyKey="SmartFilter"
+                    >
+                        <smartFilterBar:controlConfiguration>
+                            <smartFilterBar:ControlConfiguration
+                                id="IA_ID_ServiceOrder"
+                                key="ServiceOrder"
+                                index="1"
+                                visibleInAdvancedArea="true"
+                            />
+                            <smartFilterBar:ControlConfiguration
+                                key="Division"
+                                label="{i18n>Division}"
+                                visibleInAdvancedArea="true"
+                                index="2"
+                            >
+                                <smartFilterBar:customControl>
+                                    <MultiComboBox
+                                        id="IA_ID_Division"
+                                        width="290px"
+                                        items="{CompanyCodeDivision>/}"
+                                        showSecondaryValues="true"
+                                    >
+                                        <core:ListItem
+                                            key="{CompanyCodeDivision>Division}"
+                                            text="{CompanyCodeDivision>Service}"
+                                            additionalText="{CompanyCodeDivision>Division}"
+                                        />
+                                    </MultiComboBox>
+                                </smartFilterBar:customControl>
+                            </smartFilterBar:ControlConfiguration>
+                            <smartFilterBar:ControlConfiguration
+                                key="Status"
+                                label="{i18n>Status}"
+                                visibleInAdvancedArea="true"
+                                index="2"
+                                visible="false"
+                            >
+                                <smartFilterBar:customControl>
+                                    <ComboBox
+                                        id="IA_ID_Status"
+                                        width="290px"
+                                        items="{StatusModel>/StatusList}"
+                                    >
+                                        <core:ListItem
+                                            key="{StatusModel>Status}"
+                                            text="{StatusModel>Status}"
+                                        />
+                                    </ComboBox>
+                                </smartFilterBar:customControl>
+                            </smartFilterBar:ControlConfiguration>
+                        </smartFilterBar:controlConfiguration>
+                    </smartFilterBar:SmartFilterBar>
+                    <smartTable:SmartTable
+                        busyIndicatorDelay="0"
+                        id="idOpentextlogtable"
+                        smartFilterId="id_Docket_SmartFilterBar"
+                        beforeRebindTable="onBeforeRebindTable"
+                        entitySet="DocketsOCR"
+                        tableType="ResponsiveTable"
+                        useVariantManagement="false"
+                        ignoreFromPersonalisation="true"
+                        enableAutoBinding="true"
+                        header="Dockets"
+                        showRowCount="true"
+                        demandPopin="true"
+                        enableExport="false"
+                        enableCopy="false"
+                        initiallyVisibleFields="FileName,ServiceOrder,Division,Status"
+                        useTablePersonalisation="false"
+                        showTablePersonalisation="false"
+                    >
+                        <m:Table growing="true" growingThreshold="20" growingScrollToLoad="true">
+                            <m:ColumnListItem
+                                type="Navigation"
+                                press="onItemPress"
+                            >
+                                <!-- Define the columns of the table -->
+                                <m:cells>
+                                    <Text text="{FileName}" />
+                                    <Text text="{ServiceOrder}" />
+                                    <Text
+                                        text="{path:'Division', formatter: '.Formatter.formatDivisionDisplay'}"
+                                    />
+                                    <m:ObjectStatus
+                                        text="{Status}"
+                                        state="{ path: 'Status', formatter: '.Formatter.formatObjectStatus' }"
+                                    />
+                                </m:cells>
+                            </m:ColumnListItem>
+                        </m:Table>
+                    </smartTable:SmartTable>
+                </Page>
+            </layout:beginColumnPages>
+
+            <layout:midColumnPages>
+                <uxap:ObjectPageLayout
+                    id="ObjectPageLayout"
+                    enableLazyLoading="true"
+                    showTitleInHeaderContent="true"
+                    upperCaseAnchorBar="false"
+                    alwaysShowContentHeader="true"
+                    binding="{CompanyModel>/SelectedCompany}"
+                >
+                    <uxap:headerTitle>
+                        <uxap:ObjectPageDynamicHeaderTitle>
+                            <uxap:expandedHeading>
+                                <m:Title
+                                    text="Service Order: {CompanyModel>ServiceOrder}"
+                                    wrapping="true"
+                                />
+                            </uxap:expandedHeading>
+                            <uxap:snappedHeading>
+                                <m:Title
+                                    text="Service Order: {CompanyModel>ServiceOrder}"
+                                    wrapping="false"
+                                />
+                            </uxap:snappedHeading>
+                            <uxap:expandedContent>
+                                <m:ObjectIdentifier
+                                    title="Service Order Item: {CompanyModel>ServiceOrderItem}"
+                                />
+                            </uxap:expandedContent>
+                            <uxap:snappedContent>
+                                <m:ObjectIdentifier
+                                    title="Service Order Item: {CompanyModel>ServiceOrderItem}"
+                                />
+                            </uxap:snappedContent>
+                            <uxap:actions>
+                                <m:Button text="Download Report" busyIndicatorDelay="0" id="idExcleDownload" icon="sap-icon://excel-attachment" type="Emphasized" press=".onDownloadExcel"/>
+
+                                <m:Button
+                                    text="{i18n>Viewattachment}"
+                                    type="Ghost"
+                                    press="onViewAttachment"
+                                    tooltip="{i18n>Viewattachment}"
+                                />
+                                <m:Button
+                                    id="MOD_id_EditBtn"
+                                    text="{i18n>edit}"
+                                    type="Emphasized"
+                                    press="onEdit"
+                                    visible="{= !${viewModel>/editMode}}"
+                                    tooltip="{i18n>edit}"
+                                />
+                                <m:Button
+                                    text="{i18n>Simulate}"
+                                    type="Accept"
+                                    press="onClickSimulate"
+                                    visible="{= !${viewModel>/SESMode} || !${viewModel>/SCFMode} }"
+                                />
+                                <m:Button
+                                    text="{i18n>Save}"
+                                    type="Accept"
+                                    press="onSave"
+                                    visible="{viewModel>/Mode}"
+                                    tooltip="{i18n>Save}"
+                                />
+                                <m:Button
+                                    text="{i18n>Cancel}"
+                                    type="Reject"
+                                    press="onCancel"
+                                    visible="{viewModel>/Mode}"
+                                    tooltip="{i18n>Cancel}"
+                                />
+                                <m:Button
+                                    id="midExpandBtn"
+                                    icon="sap-icon://full-screen"
+                                    press=".onToggleMidFullScreen"
+                                />
+                            </uxap:actions>
+                        </uxap:ObjectPageDynamicHeaderTitle>
+                    </uxap:headerTitle>
+
+                    <uxap:sections>
+                        <uxap:ObjectPageSection
+                            id="CompanyObjectPageSection"
+                            title="Docket Header Information"
+                            titleUppercase="false"
+                        >
+                            <uxap:subSections>
+                                <uxap:ObjectPageSubSection>
+                                    <uxap:blocks>
+                                        <f:SimpleForm
+                                            editable="{viewModel>/inputMode}"
+                                            layout="ColumnLayout"
+                                            labelSpanL="3"
+                                            labelSpanM="3"
+                                            emptySpanL="1"
+                                            emptySpanM="1"
+                                            columnsL="2"
+                                            columnsM="2"
+                                        >
+                                            <m:Label
+                                                text="{i18n>DocketNo}"
+                                                tooltip="{i18n>DocketNo}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>DocketNo}"
+                                                visible="{= !${viewModel>/inputMode}}"
+                                            />
+                                            <Input
+                                                value="{CompanyModel>DocketNo}"
+                                                visible="{viewModel>/inputMode}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>filename}"
+                                                tooltip="{i18n>filename}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>FileName}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>Status}"
+                                                tooltip="{i18n>Status}"
+                                            />
+                                            <m:ObjectStatus
+                                                text="{CompanyModel>Status}"
+                                                state="{
+                                                    path: 'CompanyModel>Status',
+                                                    formatter: '.Formatter.formatObjectStatus'
+                                                }"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>ScheduleDate}"
+                                                tooltip="{i18n>ScheduleDate}"
+                                            />
+                                            <Text
+                                                text="{path:'CompanyModel>DocketDate',
+                                                   formatter: '.Formatter.formatDocketDate'}"
+                                                visible="{= !${viewModel>/inputMode}}"
+                                            />
+                                            <m:DatePicker
+                                                id="DocketDate"
+                                                value="{path:'CompanyModel>DocketDate',type: 'sap.ui.model.type.Date',formatOptions: { pattern: 'dd/MM/yyyy' }}"
+                                                visible="{viewModel>/inputMode}"
+                                                valueFormat="dd/MM/yyyy"
+                                                displayFormat="dd/MM/yyyy"
+                                                change="onDocketDateChange"
+                                            />
+                                             <m:Label
+                                                text="{i18n>supplierdetail}"
+                                                tooltip="{i18n>supplierdetail}"
+                                                visible="{viewModel>/SupplierDetail}"
+
+                                            />
+                                            <Text
+                                                id="SupplierDetail"
+                                                text="{= ${POHeaderModel>/BPName} + ' (' + ${POHeaderModel>/BPNo} + ')' }"
+                                                visible="{viewModel>/SupplierDetail}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>Division}"
+                                                tooltip="{i18n>Division}"
+                                            />
+                                            <m:Text
+                                                text="{path:'CompanyModel>Division',
+                                                  formatter: '.Formatter.formatDivisionDisplay'}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>ServiceEntrySheet}"
+                                                tooltip="{i18n>ServiceEntrySheet}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>ServiceEntrySheet}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>ServiceConfirmation}"
+                                                tooltip="{i18n>ServiceConfirmation}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>ServiceConfirmation}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>purchaseorder}"
+                                                tooltip="{i18n>purchaseorder}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>PurchaseOrder}"
+                                            />
+
+                                            <m:Label
+                                                text="{i18n>Signature Found}"
+                                                tooltip="{i18n>Signature Found}"
+                                            />
+                                            <m:Text
+                                                text="{CompanyModel>SignatureFound}"
+                                                visible="{= !${viewModel>/inputMode}}"
+                                            />
+                                            <Input
+                                                value="{CompanyModel>SignatureFound}"
+                                                visible="{viewModel>/inputMode}"
+                                            />
+                                        </f:SimpleForm>
+                                    </uxap:blocks>
+                                </uxap:ObjectPageSubSection>
+                            </uxap:subSections>
+                        </uxap:ObjectPageSection>
+          <!-- Supplier Details -->
+                          <uxap:ObjectPageSection
+                            title="Service Order Activity Details"
+                            titleUppercase="false"
+                        >
+                            <uxap:subSections>
+                                <uxap:ObjectPageSubSection>
+                                    <uxap:blocks>
+                                        <m:Table
+                                            id="idSuppliertable"
+                                            items="{SuppplierModel>/}"
+                                        >
+                                            <m:columns>
+                                             <m:Column demandPopin="true">
+                                                    <m:Text text="{i18n>Serviceorderwithitem}" tooltip="{i18n>Serviceorderwithitem}"/>
+                                                </m:Column>
+                                                <m:Column demandPopin="true">
+                                                    <m:Text text="{i18n>Product}" tooltip="{i18n>Product}"/>
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text text="{i18n>Product_Description}" tooltip="{i18n>Product_Description}"/>
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text text="{i18n>Quantity}" tooltip="{i18n>Quantity}"/>
+                                                </m:Column>
+                                            </m:columns>
+                                            <m:items>
+                                                <m:ColumnListItem>
+                                                    <m:cells>
+                                                        <m:Text text="{= ${SuppplierModel>ServiceOrder} + ' / ' + ${SuppplierModel>ServiceOrderItem}}"/>
+                                                           <m:Text text="{SuppplierModel>Product}"/>
+                                                           <m:Text text="{SuppplierModel>ServiceOrderItemDescription}"/>
+                                                           <m:Text text="{= ${SuppplierModel>Quantity} + '  ' + ${SuppplierModel>QuantityUnit}}"/>
+                                                    </m:cells>
+                                                </m:ColumnListItem>
+                                            </m:items>
+                                        </m:Table>
+                                       
+                                    </uxap:blocks>
+                                </uxap:ObjectPageSubSection>
+                            </uxap:subSections>
+                        </uxap:ObjectPageSection>
+
+                        <uxap:ObjectPageSection
+                            title="Docket Item Information"
+                            titleUppercase="false"
+                        >
+                            <uxap:subSections>
+                                <uxap:ObjectPageSubSection>
+                                    <uxap:blocks>
+                                        <m:Table
+                                            id="idTable"
+                                            items="{CompanyModel>Items/results}"
+                                            visible="{= !${viewModel>/inputMode}}"
+                                        >
+                                            <m:columns>
+                                                <m:Column visible="false" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>itemno}"
+                                                        tooltip="{i18n>itemno}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column visible="false" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>poitem}"
+                                                        tooltip="{i18n>poitem}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>Product}"
+                                                        tooltip="{i18n>Product}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>starttime}"
+                                                        tooltip="{i18n>starttime}"
+                                                    />
+                                                </m:Column>
+
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>endtime}"
+                                                        tooltip="{i18n>endtime}"
+                                                    />
+                                                </m:Column>
+
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>Product_Description}"
+                                                        tooltip="{i18n>Product_Description}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>Quantity}"
+                                                        tooltip="{i18n>Quantity}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>Unit}"
+                                                        tooltip="{i18n>Unit}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>inclQty}"
+                                                        tooltip="{i18n>inclQty}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column minScreenWidth="Tablet" demandPopin="true">
+                                                    <m:Text
+                                                        text="{i18n>btQty}"
+                                                        tooltip="{i18n>btQty}"
+                                                    />
+                                                </m:Column>
+                                            </m:columns>
+                                            <m:items>
+                                                <m:ColumnListItem>
+                                                    <m:cells>
+                                                        <m:Text
+                                                            text="{CompanyModel>ItemNo}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>POItem}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>ItemID}"
+                                                        />
+                                                        <Text
+                                                            text="{path:'CompanyModel>StartDateTime',
+                                           formatter: '.Formatter.formatDate'}"
+                                                        />
+
+                                                        <Text
+                                                            text="{path:'CompanyModel>EndDateTime',
+                                           formatter: '.Formatter.formatDate'}"
+                                                        />
+
+                                                        <m:Text
+                                                            text="{CompanyModel>Description}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>Quantity}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>QtyUnit}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>InclWeatherQty}"
+                                                        />
+                                                        <m:Text
+                                                            text="{CompanyModel>BreakTimeQty}"
+                                                        />
+                                                    </m:cells>
+                                                </m:ColumnListItem>
+                                            </m:items>
+                                        </m:Table>
+                                        <m:Table
+                                            id="idTable_Input"
+                                            items="{CompanyModel>Items/results}"
+                                            visible="{viewModel>/inputMode}"
+                                            delete="POO_onPOTableDelete"
+                                            mode="Delete"
+                                        >
+                                            <m:headerToolbar>
+                                                <m:Toolbar>
+                                                    <m:ToolbarSpacer />
+                                                    <m:Button
+                                                        id="POO_idAddItemButton"
+                                                        type="Transparent"
+                                                        text="{i18n>createitem}"
+                                                        press="onAddItemButtonPress"
+                                                    />
+                                                </m:Toolbar>
+                                            </m:headerToolbar>
+
+                                            <m:columns>
+                                                <m:Column visible="false">
+                                                    <m:Text
+                                                        text="{i18n>itemno}"
+                                                        tooltip="{i18n>itemno}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column visible="false">
+                                                    <m:Text
+                                                        text="{i18n>poitem}"
+                                                        tooltip="{i18n>poitem}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>Product}"
+                                                        tooltip="{i18n>Product}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>starttime}"
+                                                        tooltip="{i18n>starttime}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>endtime}"
+                                                        tooltip="{i18n>endtime}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>Product_Description}"
+                                                        tooltip="{i18n>Product_Description}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>Quantity}"
+                                                        tooltip="{i18n>Quantity}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>Unit}"
+                                                        tooltip="{i18n>Unit}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>inclQty}"
+                                                        tooltip="{i18n>inclQty}"
+                                                    />
+                                                </m:Column>
+                                                <m:Column>
+                                                    <m:Text
+                                                        text="{i18n>btQty}"
+                                                        tooltip="{i18n>btQty}"
+                                                    />
+                                                </m:Column>
+                                            </m:columns>
+                                            <m:items>
+                                                <m:ColumnListItem>
+                                                    <m:cells>
+                                                        <m:Input
+                                                            maxLength="10"
+                                                            type="Number"
+                                                            value="{CompanyModel>ItemNo}"
+                                                            liveChange="onItemNoLiveChange"
+                                                        />
+                                                        <m:Input
+                                                            maxLength="10"
+                                                            type="Number"
+                                                            value="{CompanyModel>POItem}"
+                                                            liveChange="onItemNoLiveChange"
+                                                        />
+                                                        <m:Input
+                                                            type="Number"
+                                                            value="{CompanyModel>ItemID}"
+                                                            showValueHelp="true"
+                                                            valueHelpRequest=".onValueHelpRequestItem"
+                                                        />
+
+                                                        <m:DateTimePicker
+                                                            value="{
+                                                              path: 'CompanyModel>StartDateTime',
+                                                              type: 'sap.ui.model.type.DateTime',
+                                                              formatOptions: { pattern: 'dd/MM/yyyy HH:mm:ss' }
+                                                            }"
+                                                            valueFormat="yyyy-MM-dd'T'HH:mm:ss"
+                                                            displayFormat="dd/MM/yyyy HH:mm:ss"
+                                                            initialFocusedDateValue="{viewModel>/today}"
+                                                        />
+                                                        <m:DateTimePicker
+                                                            value="{
+                                                              path: 'CompanyModel>EndDateTime',
+                                                              type: 'sap.ui.model.type.DateTime',
+                                                              formatOptions: { pattern: 'dd/MM/yyyy HH:mm:ss' }
+                                                            }"
+                                                            valueFormat="yyyy-MM-dd'T'HH:mm:ss"
+                                                            displayFormat="dd/MM/yyyy HH:mm:ss"
+                                                            initialFocusedDateValue="{viewModel>/today}"
+                                                        />
+
+                                                        <m:Text
+                                                            text="{CompanyModel>Description}"
+                                                        />
+
+                                                        <m:Input
+                                                            value="{CompanyModel>Quantity}"
+                                                            liveChange="onItemNoLiveChange"
+                                                        />
+
+                                                        <m:Text
+                                                            text="{CompanyModel>QtyUnit}"
+                                                        />
+
+                                                        <m:Input
+                                                            value="{CompanyModel>InclWeatherQty}"
+                                                            liveChange="onItemNoLiveChange"
+                                                        />
+
+                                                        <m:Input
+                                                            value="{CompanyModel>BreakTimeQty}"
+                                                            liveChange="onItemNoLiveChange"
+                                                        />
+                                                    </m:cells>
+                                                </m:ColumnListItem>
+                                            </m:items>
+                                        </m:Table>
+                                    </uxap:blocks>
+                                </uxap:ObjectPageSubSection>
+                            </uxap:subSections>
+                        </uxap:ObjectPageSection>
+                        <!-- <uxap:ObjectPageSection
+                            title="Attachment"
+                            titleUppercase="false"
+                        >
+                            <uxap:subSections>
+                                <uxap:ObjectPageSubSection
+                                    id="MOD_id_AttachmentOPS"
+                                    title="{i18n>attachment}"
+                                    titleUppercase="false"
+                                    showTitle="false"
+                                >
+                                    <core:HTML
+                                        id="MOD_id_PDFframe"
+                                        content=""
+                                    />
+                                </uxap:ObjectPageSubSection>
+                            </uxap:subSections>
+                        </uxap:ObjectPageSection> -->
+                    </uxap:sections>
+                </uxap:ObjectPageLayout>
+            </layout:midColumnPages>
+        </layout:FlexibleColumnLayout>
+    </Page>
+</mvc:View>

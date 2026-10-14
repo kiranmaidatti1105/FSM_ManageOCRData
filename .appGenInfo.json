@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Tue Sep 30 2025 00:59:49 GMT+0000 (Coordinated Universal Time)",
+    "generatorPlatform": "SAP Business Application Studio",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "https://winslow-mgmt-services-unit-trust-fsm-btp-dev-pt8gi5dj-w4d7dd59a.cfapps.ap10.hana.ondemand.com/v2/odata/v4/main",
+    "appName": "ocr",
+    "appTitle": "Docket OCR Data",
+    "appDescription": "An SAP Fiori application.",
+    "appNamespace": "sap.winslow",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.140.0",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.19.0",
+    "template": "Basic V2",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

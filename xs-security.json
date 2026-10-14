@@ -1,0 +1,40 @@
+{
+  "xsappname": "sapwinslowocr",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of called application",
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    },
+    {
+      "name": "$XSAPPNAME.DOCRVerifier",
+      "description": "Role for Document Verification"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [
+        "uaa.user"
+      ]
+    },
+    {
+      "name": "DOCRVerifier",
+      "description": "Role for Document Verification",
+      "scope-references": [
+        "$XSAPPNAME.DOCRVerifier"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "DOCRVerifier",
+      "description": "Role for Document Verification",
+      "role-template-references": [
+        "$XSAPPNAME.DOCRVerifier"
+      ]
+    }
+  ]
+}

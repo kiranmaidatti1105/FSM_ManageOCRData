@@ -1,0 +1,13 @@
+{
+  "routes": [{
+      "source": "^/user-api/(.*)$",
+      "target": "/user-api/$1",
+      "service": "sap-approuter-userapi",
+      "authenticationType": "xsuaa"
+    }],
+  "welcomeFile": "/sapwinslowocr",
+  "logout": {
+    "logoutEndpoint": "/my/logout",
+    "logoutPage": "/"
+  }
+}

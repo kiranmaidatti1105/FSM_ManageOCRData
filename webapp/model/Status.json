@@ -1,0 +1,9 @@
+{
+  "StatusList": [
+    { "Status": "New" },
+    { "Status": "Saved" },
+    { "Status": "In Process" },
+    { "Status": "Processed" }
+
+  ]
+}

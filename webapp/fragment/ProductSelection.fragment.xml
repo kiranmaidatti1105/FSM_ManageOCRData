@@ -1,0 +1,79 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    id="PS_id_VariantFragment"
+>
+    <Dialog
+        id="PS_id_Dialog"
+        busyIndicatorDelay="0"
+        title="Select Product ({= ${products>/}.length})"
+        contentWidth="70%"
+        contentHeight="80%"
+        draggable="true"
+        resizable="true"
+    >
+        <VBox>
+            <FlexBox
+                direction="Row"
+                justifyContent="Start"
+            >
+                <SearchField
+                    id="PS_id_Search"
+                    liveChange="PS_onSearch"
+                    placeholder="Search by Purchase Product Code or Description"
+                    showSearchButton="true"
+                    maxLength="25"
+                    tooltip="Search by Purchase Product Code or Description"
+                    class="sapUiResponsiveMargin"
+                />
+            </FlexBox>
+
+            <Table
+                id="PS_id_Table"
+                items="{products>/}"
+                growing="true"
+                growingThreshold="50"
+                growingScrollToLoad="true"
+                alternateRowColors="true"
+                backgroundDesign="Translucent"
+            >
+                <columns>
+                    <Column demandPopin="true" width="20%" minScreenWidth="Desktop">
+                        <Text text="{i18n>Material}" tooltip="{i18n>Material}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Desktop">
+                        <Text text="{i18n>Material_Description}" tooltip="{i18n>Material_Description}" />
+                    </Column>
+                    <Column width="20%">
+                        <Text text="{i18n>Product}" tooltip="{i18n>Product}" /> 
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>Product_Description}" tooltip="{i18n>Product_Description}" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem
+                        type="Active"
+                        press="PS_onProductSelect"
+                    >
+                        <cells>
+                            <Text text="{products>Material}" />
+                            <Text text="{products>PurchaseOrderItemText}" />
+                             <Text text="{products>YY1_SaleProduct_PDI}" />
+                            <Text text="{products>YY1_SubyProductDescipt_PDI}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </VBox>
+
+        <endButton>
+            <Button
+                text="Close"
+                press="PS_onCloseDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
+ 

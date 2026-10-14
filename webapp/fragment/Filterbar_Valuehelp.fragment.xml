@@ -1,0 +1,67 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    id="idVariantFragment1"
+>
+    <Dialog
+        id="Service_id_Dialog"
+        title="Select Product ({= ${Serviceordermodel>/}.length})"
+        contentWidth="35%"
+        contentHeight="70%"
+        draggable="true"
+        resizable="true"
+    >
+        <VBox>
+            <FlexBox
+                direction="Row"
+                justifyContent="Start"
+            >
+                <SearchField
+                    id="SO_id_Search"
+                    liveChange="So_onSearch"
+                    placeholder="Search"
+                    showSearchButton="true"
+                    maxLength="25"
+                    width="auto"
+                    class="sapUiResponsiveMargin"
+                />
+            </FlexBox>
+
+            <Table
+                id="SO_id_Table"
+                items="{Serviceordermodel>/}"
+                growing="true"
+                growingThreshold="50"
+                growingScrollToLoad="true"
+                alternateRowColors="true"
+                backgroundDesign="Translucent"
+            >
+                <columns>
+                    <Column width="25%">
+                        <Text text="Service Order" />
+                    </Column>
+                  
+                </columns>
+
+                <items>
+                    <ColumnListItem
+                        type="Active"
+                        press="So_onCustomerSelect"
+                    >
+                        <cells>
+                            <Text text="{Serviceordermodel>ServiceOrder}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </VBox>
+
+        <endButton>
+            <Button
+                text="Close"
+                press="So_onCloseDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
+ 
